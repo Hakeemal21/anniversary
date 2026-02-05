@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hakeem & Putri</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+  margin: 0;
+  background: #f3e6d8;
+  font-family: 'Poppins', sans-serif;
+  overflow-x: hidden;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 30px;
+  color: #e91e63;
+  font-weight: 600;
+}
+
+.cloud {
+  position: fixed;
+  font-size: 60px;
+  opacity: 0.2;
+  animation: floatCloud 60s linear infinite;
+}
+
+@keyframes floatCloud {
+  from { transform: translateX(-20vw); }
+  to { transform: translateX(120vw); }
+}
+
+.timer-wrapper {
+  position: relative;
+  background: white;
+  max-width: 650px;
+  margin: 30px auto;
+  padding: 30px;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.heart-border {
+  position: absolute;
+  inset: -20px;
+  pointer-events: none;
+}
+
+.heart-border span {
+  position: absolute;
+  font-size: 22px;
+  color: #ff2f7d;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000,
+               -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+.timer-wrapper h2 {
+  color: #e91e63;
+}
+
+.timer-wrapper p {
+  font-size: 18px;
+}
+
+.photos {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 30px;
+}
+
+.photos img {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 40%;
+}
+
+.music-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  font-size: 36px;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Clouds -->
+<div class="cloud" style="top:10%; left:-10%">☁️</div>
+<div class="cloud" style="top:40%; animation-delay:20s;">☁️</div>
+<div class="cloud" style="top:70%; animation-delay:40s;">☁️</div>
+
+<h1>Hakeem & Putri</h1>
+
+<!-- Timer -->
+<div class="timer-wrapper">
+  <div class="heart-border" id="hearts"></div>
+
+  <h2>Together Since</h2>
+  <p id="together"></p>
+
+  <h2>Next Anniversary In</h2>
+  <p id="anniversary"></p>
+</div>
+
+<!-- Photos -->
+<div class="photos">
+  <img src="https://i.imgur.com/1RAHLxx.jpeg" alt="photo1">
+  <img src="https://i.imgur.com/mF7mv9A.jpeg" alt="photo2">
+</div>
+
+<!-- Music Button -->
+<div class="music-btn" id="playMusic">&#128189;</div>
+
+<audio id="bg-music" loop>
+  <source src="song.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+// HEART BORDER
+const heartBox = document.getElementById("hearts");
+for (let i = 0; i < 24; i++) {
+  const h = document.createElement("span");
+  h.innerHTML = "❤";
+  h.style.top = Math.random()*100 + "%";
+  h.style.left = Math.random()*100 + "%";
+  heartBox.appendChild(h);
+}
+
+// TIMER (Malaysia GMT+8)
+const startDate = new Date("2025-12-17T00:00:00+08:00");
+
+function updateTimer() {
+  const now = new Date();
+  const diff = now - startDate;
+
+  if (diff < 0) {
+    document.getElementById("together").innerText =
+      "Counting down to our beginning 💕";
+    return;
+  }
+
+  const days = Math.floor(diff / (1000*60*60*24));
+  const hours = Math.floor(diff / (1000*60*60)) % 24;
+  const minutes = Math.floor(diff / (1000*60)) % 60;
+  const seconds = Math.floor(diff / 1000) % 60;
+
+  document.getElementById("together").innerText =
+    `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+
+  let next = new Date(startDate);
+  next.setFullYear(now.getFullYear());
+  if (next < now) next.setFullYear(now.getFullYear()+1);
+
+  const aDiff = next - now;
+  const aDays = Math.floor(aDiff / (1000*60*60*24));
+  const aHours = Math.floor(aDiff / (1000*60*60)) % 24;
+  const aMinutes = Math.floor(aDiff / (1000*60)) % 60;
+
+  document.getElementById("anniversary").innerText =
+    `${aDays} days, ${aHours} hours, ${aMinutes} minutes`;
+}
+
+updateTimer();
+setInterval(updateTimer, 1000);
+
+// MUSIC
+document.getElementById("playMusic").addEventListener("click", () => {
+  document.getElementById("bg-music").play().catch(err => console.log("Playback prevented:", err));
+});
+</script>
+
+</body>
+</html>
