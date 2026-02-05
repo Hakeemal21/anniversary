@@ -15,6 +15,7 @@ body {
   overflow-x: hidden;
 }
 
+/* TITLE */
 h1 {
   text-align: center;
   margin-top: 30px;
@@ -22,40 +23,18 @@ h1 {
   font-weight: 600;
 }
 
-.cloud {
-  position: fixed;
-  font-size: 60px;
-  opacity: 0.2;
-  animation: floatCloud 60s linear infinite;
-}
-
-@keyframes floatCloud {
-  from { transform: translateX(-20vw); }
-  to { transform: translateX(120vw); }
-}
-
+/* TIMER BOX */
 .timer-wrapper {
   position: relative;
   background: white;
   max-width: 650px;
-  margin: 30px auto;
+  margin: 40px auto;
   padding: 30px;
   border-radius: 20px;
   text-align: center;
-}
-
-.heart-border {
-  position: absolute;
-  inset: -20px;
-  pointer-events: none;
-}
-
-.heart-border span {
-  position: absolute;
-  font-size: 22px;
-  color: #ff2f7d;
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000,
-               -1px 1px 0 #000, 1px 1px 0 #000;
+  border: 2px dashed #ff9acb;
+  box-shadow: 0 0 15px rgba(255,154,203,0.4);
+  z-index: 2;
 }
 
 .timer-wrapper h2 {
@@ -66,6 +45,7 @@ h1 {
   font-size: 18px;
 }
 
+/* PHOTOS */
 .photos {
   display: flex;
   justify-content: center;
@@ -80,29 +60,47 @@ h1 {
   border-radius: 40%;
 }
 
+/* MUSIC BUTTON */
 .music-btn {
   position: fixed;
   bottom: 20px;
   right: 20px;
   font-size: 36px;
   cursor: pointer;
+  z-index: 3;
+}
+
+/* HEART CONFETTI */
+.heart {
+  position: fixed;
+  top: -10px;
+  font-size: 20px;
+  animation: fall linear forwards;
+  z-index: 1;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(110vh) translateX(50px);
+    opacity: 0;
+  }
+}
+
+/* CLOUDS */
+.cloud {
+  position: fixed;
+  font-size: 70px;
+  opacity: 0.25;
+  z-index: 0;
 }
 </style>
 </head>
 
 <body>
 
-<!-- Clouds -->
-<div class="cloud" style="top:10%; left:-10%">☁️</div>
-<div class="cloud" style="top:40%; animation-delay:20s;">☁️</div>
-<div class="cloud" style="top:70%; animation-delay:40s;">☁️</div>
-
 <h1>Hakeem & Putri</h1>
 
-<!-- Timer -->
 <div class="timer-wrapper">
-  <div class="heart-border" id="hearts"></div>
-
   <h2>Together Since</h2>
   <p id="together"></p>
 
@@ -110,28 +108,64 @@ h1 {
   <p id="anniversary"></p>
 </div>
 
-<!-- Photos -->
 <div class="photos">
-  <img src="https://i.imgur.com/1RAHLxx.jpeg" alt="photo1">
-  <img src="https://i.imgur.com/mF7mv9A.jpeg" alt="photo2">
+  <img src="https://i.imgur.com/1RAHLxx.jpeg">
+  <img src="https://i.imgur.com/mF7mv9A.jpeg">
 </div>
 
-<!-- Music Button -->
-<div class="music-btn" id="playMusic">&#128189;</div>
+<div class="music-btn" id="playMusic">🎵</div>
 
 <audio id="bg-music" loop>
   <source src="song.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-// HEART BORDER
-const heartBox = document.getElementById("hearts");
-for (let i = 0; i < 24; i++) {
-  const h = document.createElement("span");
-  h.innerHTML = "❤";
-  h.style.top = Math.random()*100 + "%";
-  h.style.left = Math.random()*100 + "%";
-  heartBox.appendChild(h);
+// HEART CONFETTI
+function createHeart() {
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerHTML = "❤";
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.fontSize = (14 + Math.random() * 16) + "px";
+  heart.style.color = Math.random() > 0.5 ? "#ff9acb" : "#ffffff";
+  heart.style.opacity = Math.random();
+  heart.style.animationDuration = (4 + Math.random() * 4) + "s";
+  document.body.appendChild(heart);
+
+  setTimeout(() => heart.remove(), 8000);
+}
+setInterval(createHeart, 400);
+
+// CLOUD GENERATOR
+function createCloud() {
+  const cloud = document.createElement("div");
+  cloud.className = "cloud";
+  cloud.innerHTML = "☁️";
+
+  const fromLeft = Math.random() > 0.5;
+  const startX = fromLeft ? "-20vw" : "120vw";
+  const endX = fromLeft ? "120vw" : "-20vw";
+
+  cloud.style.top = Math.random() * 80 + "vh";
+  cloud.style.left = startX;
+  cloud.style.fontSize = (50 + Math.random() * 50) + "px";
+
+  const duration = 40 + Math.random() * 40;
+  cloud.animate([
+    { transform: `translateX(0)` },
+    { transform: `translateX(${fromLeft ? "140vw" : "-140vw"}) translateY(${Math.random()*40 - 20}px)` }
+  ], {
+    duration: duration * 1000,
+    iterations: Infinity,
+    easing: "linear"
+  });
+
+  document.body.appendChild(cloud);
+}
+
+// CREATE CLOUDS
+for (let i = 0; i < 6; i++) {
+  createCloud();
 }
 
 // TIMER (Malaysia GMT+8)
@@ -173,9 +207,10 @@ setInterval(updateTimer, 1000);
 
 // MUSIC
 document.getElementById("playMusic").addEventListener("click", () => {
-  document.getElementById("bg-music").play().catch(err => console.log("Playback prevented:", err));
+  document.getElementById("bg-music").play();
 });
 </script>
 
 </body>
 </html>
+
